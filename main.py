@@ -781,12 +781,21 @@ async def status_task():
     # 1. pingを取得 (ms)
     ping = round(bot.latency * 1000)
 
-    # 2. 稼働時間を計算 (時間のみ)
+    # 2. 稼働時間を計算 (X時間Y分Z秒)
     uptime_duration = datetime.datetime.now() - start_time
-    uptime_hours = int(uptime_duration.total_seconds() // 3600)
+    # timedeltaを秒単位に変換
+    total_seconds = int(uptime_duration.total_seconds())
 
-    # 3. ステータス文字列を作成
-    status_message = f"{ping}ms | 稼働{uptime_hours}時間"
+    # 時間、分、秒に変換
+    hours = total_seconds // 3600
+    minutes = (total_seconds % 3600) // 60
+    seconds = total_seconds % 60
+    
+    # 稼働時間メッセージを新しい形式で作成
+    uptime_message = f"{hours}時間{minutes}分{seconds}秒"
+
+    # 3. ステータス文字列を作成 (例: 50ms | 稼働1時間23分45秒)
+    status_message = f"{ping}ms | 稼働{uptime_message}"
 
     # 4. ステータスを更新 (ActivityType.watchingを使用)
     activity = discord.Activity(
